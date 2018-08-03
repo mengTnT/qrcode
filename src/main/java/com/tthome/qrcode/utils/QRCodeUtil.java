@@ -16,10 +16,10 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.Random;
+import java.util.UUID;
 
 /**
  * 二维码工具类
- *
  */
 public class QRCodeUtil {
 
@@ -31,6 +31,10 @@ public class QRCodeUtil {
     private static final int WIDTH = 60;
     // LOGO高度
     private static final int HEIGHT = 60;
+    //当前日期
+    private static Date d = new Date();
+    private static SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    private static String dateNowStr = sdf.format(d);
 
     /**
      * 生成二维码的方法
@@ -66,6 +70,7 @@ public class QRCodeUtil {
         QRCodeUtil.insertImage(image, imgPath, needCompress);
         return image;
     }
+
     /**
      * 插入LOGO
      *
@@ -76,6 +81,7 @@ public class QRCodeUtil {
      */
     private static void insertImage(BufferedImage source, String imgPath,
                                     boolean needCompress) throws Exception {
+
         File file = new File(imgPath);
         if (!file.exists()) {
             System.err.println("" + imgPath + "   该文件不存在！");
@@ -125,7 +131,8 @@ public class QRCodeUtil {
         BufferedImage image = QRCodeUtil.createImage(content, imgPath,
                 needCompress);
         mkdirs(destPath);
-        String file = new Random().nextInt(99999999) + ".jpg";
+        //文件名，防止重名
+        String file = new Random().nextInt(99999999)+UUID.randomUUID().toString().replace("-", "").substring(0, 10) + ".jpg";
         ImageIO.write(image, FORMAT_NAME, new File(destPath + "/" + file));
     }
 
@@ -234,32 +241,29 @@ public class QRCodeUtil {
      * 解析二维码
      *
      * @param path 二维码图片地址
-     * @return  不是二维码的内容返回null,是二维码直接返回识别的结果
+     * @return 不是二维码的内容返回null, 是二维码直接返回识别的结果
      * @throws Exception
      */
     public static String decode(String path) throws Exception {
         return QRCodeUtil.decode(new File(path));
     }
 
-    public static void main(String[] args) throws Exception {
-        Date d = new Date();
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        String dateNowStr = sdf.format(d);
-        // 生成二维码
-      String text = "http://www.visney.cn/";
-      //loge图片
-      String imagePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\loge.png";
-      //图片保存路径
-      String destPath = "D:\\QRcode\\"+dateNowStr+"/";
-      QRCodeUtil.encode(text, imagePath, destPath, true);
-        //验证图片是否含有二维码
-     /*   String destPath1 = System.getProperty("user.dir") + "/data/3.jpg";
-        try {
-            String result = decode(destPath1);
-            System.out.println(result);
-        }catch (Exception e){
-            e.printStackTrace();
-            System.out.println(destPath1+"不是二维码");
-        }*/
+    /**
+     * 创建二维码并输出
+     * @param str 需要拼接的加密字符串
+     * @return
+     * @throws Exception
+     */
+    public static String creatQRcode(String str,String url,String imgPath) throws Exception {
+        // 生成二维码的内容，如：visney.cn/qrcode?key=sjdajhdjawdaj
+        String text = url + str;
+        //loge图片
+        //String imagePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\loge.png";
+        String imagePath ="D:\\QRcode\\loge\\loge.png";
+        //图片输出路径
+        String destPath = imgPath + dateNowStr + "/";
+        QRCodeUtil.encode(text, imagePath, destPath, true);
+        return destPath;
+
     }
 }

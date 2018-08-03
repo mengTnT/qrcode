@@ -3,14 +3,35 @@
 <mapper namespace="com.tthome.qrcode.dao.CheckDataDao">
 
     <resultMap id="BaseResultMap" type="com.tthome.qrcode.entity.CheckData">
-        <result column="check_data_id" property="id"/>
-        <result column="check_data_hashcode" property="hashcode"/>
-        <result column="is_check" property="isCheck"/>
+        <result column="id" property="id"/>
+        <result column="key" property="key"/>
+        <result column="isCheck" property="isCheck"/>
+        <result column="isCheckTime" property="isCheckTime"/>
 
     </resultMap>
 
    <insert id="insert">
-       INSERT INTO check_data VALUES(0,#{hashcode},#{isCheck})
+       INSERT INTO check_data VALUES(0,#{key},now(),0,null)
    </insert>
+
+    <select id="selectIdMax" resultMap="BaseResultMap">
+        SELECT
+	*
+FROM
+	check_data
+ORDER BY
+	id DESC
+LIMIT 1
+    </select>
+
+    <select id="selectByKey" resultMap="BaseResultMap">
+      SELECT * FROM check_data t1
+     WHERE t1.`key`=#{key}
+    </select>
+
+    <update id="updateCheck">
+        update check_data set isCheck=1, isCheckTime=now()
+        where id=#{id}
+    </update>
 
 </mapper>
