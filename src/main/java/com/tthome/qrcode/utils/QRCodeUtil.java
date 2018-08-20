@@ -115,6 +115,8 @@ public class QRCodeUtil {
         graph.setStroke(new BasicStroke(3f));
         graph.draw(shape);
         graph.dispose();
+
+
     }
 
     /**
@@ -126,14 +128,15 @@ public class QRCodeUtil {
      * @param needCompress 是否压缩LOGO
      * @throws Exception
      */
-    public static void encode(String content, String imgPath, String destPath,
+    public static String encode(String content, String imgPath, String destPath,
                               boolean needCompress) throws Exception {
         BufferedImage image = QRCodeUtil.createImage(content, imgPath,
                 needCompress);
         mkdirs(destPath);
         //文件名，防止重名
-        String file = new Random().nextInt(99999999)+UUID.randomUUID().toString().replace("-", "").substring(0, 10) + ".jpg";
-        ImageIO.write(image, FORMAT_NAME, new File(destPath + "/" + file));
+        String fileName = new Random().nextInt(99999999)+UUID.randomUUID().toString().replace("-", "").substring(0, 10) + ".jpg";
+        ImageIO.write(image, FORMAT_NAME, new File(destPath + "/" + fileName));
+        return  fileName;
     }
 
     /**
@@ -254,16 +257,18 @@ public class QRCodeUtil {
      * @return
      * @throws Exception
      */
-    public static String creatQRcode(String str,String url,String imgPath) throws Exception {
+    public static String[] creatQRcode(String str,String url,String imgPath) throws Exception {
+        String[] strings={"",""};
         // 生成二维码的内容，如：visney.cn/qrcode?key=sjdajhdjawdaj
         String text = url + str;
         //loge图片
-        //String imagePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\loge.png";
         String imagePath ="D:\\QRcode\\loge\\loge.png";
         //图片输出路径
         String destPath = imgPath + dateNowStr + "/";
-        QRCodeUtil.encode(text, imagePath, destPath, true);
-        return destPath;
+        String fileName = QRCodeUtil.encode(text, imagePath, destPath, true);
+        strings[0]=destPath;
+        strings[1]=fileName;
+        return strings;
 
     }
 }

@@ -2,6 +2,7 @@ package com.tthome.qrcode.controller;
 
 import com.tthome.qrcode.entity.CheckData;
 import com.tthome.qrcode.service.CheckDataService;
+import com.tthome.qrcode.utils.CompoundImg;
 import com.tthome.qrcode.utils.EncryptUtil;
 import com.tthome.qrcode.utils.QRCodeUtil;
 import com.tthome.qrcode.utils.ZipUtil;
@@ -10,7 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletResponse;
+import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,7 +54,9 @@ public class CreatQRCodeController {
             checkData.setKey(encryptString);
             checkDataService.insert(checkData);
             //根据key创建二维码
-            filePath = QRCodeUtil.creatQRcode(encryptString,url,imgPath);
+            String[] strings = QRCodeUtil.creatQRcode(encryptString, url, imgPath);
+            filePath=strings[0];
+            CompoundImg.compound(filePath+strings[1]);
 
         }
         //把生成的二维码压缩成zip
